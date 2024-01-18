@@ -8,6 +8,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
+const port = process.env.PORT || 3000;
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST");
@@ -16,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/meals", async (req, res) => {
-  const meals = await fs.readFile("./backend/data/available-meals.json", "utf8");
+  const meals = await fs.readFile("./data/available-meals.json", "utf8");
   res.json(JSON.parse(meals));
 });
 
@@ -53,10 +55,10 @@ app.post("/orders", async (req, res) => {
     ...orderData,
     id: (Math.random() * 1000).toString(),
   };
-  const orders = await fs.readFile("./backend/data/orders.json", "utf8");
+  const orders = await fs.readFile("./data/orders.json", "utf8");
   const allOrders = JSON.parse(orders);
   allOrders.push(newOrder);
-  await fs.writeFile("./backend/data/orders.json", JSON.stringify(allOrders));
+  await fs.writeFile("./data/orders.json", JSON.stringify(allOrders));
   res.status(201).json({ message: "Order created!" });
 });
 
@@ -68,4 +70,4 @@ app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
 
-app.listen(3000);
+app.listen(port);
